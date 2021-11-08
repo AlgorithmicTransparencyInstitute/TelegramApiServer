@@ -1,7 +1,5 @@
 FROM php:8.0-cli
 
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /usr/local/bin/docker-compose-wait
-
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install apt-utils procps -y \
     # Install main extension
@@ -12,7 +10,6 @@ RUN apt-get update && apt-get upgrade -y \
     && pecl bundle ev \
     && docker-php-ext-install -j$(nproc) ev \
     # Install composer
-    && chmod +x /usr/local/bin/docker-compose-wait \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     # Cleanup
     && docker-php-source delete \
@@ -35,4 +32,11 @@ VOLUME ["/app/sessions"]
 
 EXPOSE 9503
 
-ENTRYPOINT docker-compose-wait && nice -n 20 php server.php -e=.env.docker --docker -s=*
+# Add Tini
+ENV TINI_VERSION v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+ENTRYPOINT ["/tini", "--"]
+
+# Run your program under Tini
+CMD ["php", "server.php", "-e=.env.docker", "--docker", "-s=*", "--session=www"]
