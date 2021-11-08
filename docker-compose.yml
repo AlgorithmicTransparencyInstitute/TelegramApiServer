@@ -1,13 +1,13 @@
 version: '3.5'
 services:
   telegram-api-server:
-    image: xtrime/telegram-api-server:latest
     container_name: telegram-api-server
-    restart: unless-stopped
+    restart: always
     ports:
       - "127.0.0.1:9503:9503"
     volumes:
       - ./:/app-host-link
+      - ./sessions:/app/sessions
     working_dir: /app-host-link
     depends_on:
       - mysql
@@ -18,17 +18,4 @@ services:
       options:
         max-size: "1024k"
         max-file: "2"
-  mysql:
-    image: mariadb:10.6
-    container_name: telegram-api-server-mysql
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:9507:3306"
-    volumes:
-      - ./.mysql:/var/lib/mysql
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-    command: ["mysqld", "--innodb-buffer-pool-size=16M"]
-networks:
-  default:
-    name: telegram-api-server
+ 

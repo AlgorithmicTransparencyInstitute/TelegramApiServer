@@ -136,6 +136,7 @@ class Client
                             //Disable logging to stdout
                             $logLevel = Logger::getInstance()->minLevelIndex;
                             Logger::getInstance()->minLevelIndex = Logger::$levels[LogLevel::EMERGENCY];
+                            @putenv("CURRENT_SESSION={$name}");
                             $instance->echo("Authorizing session: {$name}\n");
                             yield $instance->start();
 
@@ -143,6 +144,8 @@ class Client
                             Logger::getInstance()->minLevelIndex = $logLevel;
                         }
                         $this->startLoggedInSession($name);
+
+                        @putenv("CURRENT_SESSION=");
                     }
                 }
             }
