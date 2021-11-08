@@ -2,33 +2,24 @@ version: '3.5'
 services:
   telegram-api-server:
     image: xtrime/telegram-api-server:latest
+    build:
+      context: .
+    env_file: '.env'
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     container_name: telegram-api-server
     restart: unless-stopped
     ports:
-      - "127.0.0.1:9503:9503"
+      - "9503:9503"
     volumes:
       - ./:/app-host-link
     working_dir: /app-host-link
-    depends_on:
-      - mysql
-    environment:
-      WAIT_HOSTS: mysql:3306
     logging:
       driver: "json-file"
       options:
         max-size: "1024k"
         max-file: "2"
-  mysql:
-    image: mariadb:10.6
-    container_name: telegram-api-server-mysql
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:9507:3306"
-    volumes:
-      - ./.mysql:/var/lib/mysql
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-    command: ["mysqld", "--innodb-buffer-pool-size=16M"]
-networks:
-  default:
-    name: telegram-api-server
