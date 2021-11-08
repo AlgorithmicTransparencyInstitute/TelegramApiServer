@@ -1,6 +1,9 @@
 version: '3.5'
 services:
   telegram-api-server:
+    build:
+      context: .
+    env_file: '.env'
     container_name: telegram-api-server
     restart: always
     ports:
