@@ -1,25 +1,17 @@
 version: '3.5'
 services:
   telegram-api-server:
-    image: xtrime/telegram-api-server:latest
-    build:
-      context: .
-    env_file: '.env'
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
     container_name: telegram-api-server
-    restart: unless-stopped
+    restart: always
     ports:
       - "9503:9503"
     volumes:
       - ./:/app-host-link
+      - ./sessions:/app/sessions
     working_dir: /app-host-link
     logging:
       driver: "json-file"
       options:
         max-size: "1024k"
         max-file: "2"
+

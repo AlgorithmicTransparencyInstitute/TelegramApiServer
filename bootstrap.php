@@ -6,6 +6,27 @@ use TelegramApiServer\Migrations\EnvUpgrade;
 $root = __DIR__;
 const ENV_VERSION='1';
 
+
+register_shutdown_function( "fatal_handler" );
+
+function fatal_handler() {
+    $errfile = "unknown file";
+    $errstr  = "shutdown";
+    $errno   = E_CORE_ERROR;
+    $errline = 0;
+
+    $error = error_get_last();
+
+    if($error !== NULL) {
+        $errno   = $error["type"];
+        $errfile = $error["file"];
+        $errline = $error["line"];
+        $errstr  = $error["message"];
+
+        echo "Hey Would you mind deleting the files from session ?? specially for ${ENV['CURRENT_SESSION']}";
+    }
+}
+
 //Composer init
 {
     if (!file_exists($root . '/vendor/autoload.php')) {
