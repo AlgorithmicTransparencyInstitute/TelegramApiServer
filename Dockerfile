@@ -24,7 +24,7 @@ RUN cp -a docker/php/conf.d/. "$PHP_INI_DIR/conf.d/" \
     && composer clear
 
 #Creating symlink to save .env in volume
-RUN mkdir /app/sessions &&  \
+RUN mkdir -p /app/sessions &&  \
     touch '/app/sessions/.env.docker' && \
     ln -s '/app/sessions/.env.docker' '/app/.env.docker'
 
