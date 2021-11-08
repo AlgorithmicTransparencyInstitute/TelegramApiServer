@@ -43,7 +43,7 @@ class Client
 
         yield $promises;
 
-        Loop::defer(fn() => yield $this->startNotLoggedInSessions());
+        // aa Loop::defer(fn() => yield $this->startNotLoggedInSessions());
 
         $sessionsCount = count($sessionFiles);
         warning(
