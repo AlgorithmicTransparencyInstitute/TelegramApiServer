@@ -1,4 +1,4 @@
-FROM php:8.0-cli
+FROM arm64v8/php:8.0-cli
 
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install apt-utils procps -y \
@@ -34,7 +34,7 @@ EXPOSE 9503
 
 # Add Tini
 ENV TINI_VERSION v0.19.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-arm64 /tini
 RUN chmod +x /tini
 ENTRYPOINT ["/tini", "--"]
 
