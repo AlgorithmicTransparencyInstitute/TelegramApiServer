@@ -38,12 +38,17 @@ class Client
         foreach ($sessionFiles as $file) {
             $sessionName = Files::getSessionName($file);
             $this->addSession($sessionName);
-            $promises[] = $this->startLoggedInSession($sessionName);
+            try {
+                $promises[] = $this->startLoggedInSession($sessionName);
+            } catch (\Exception $e) {
+                echo "Got Session Exception";
+            }
+            
         }
 
         yield $promises;
 
-        // aa Loop::defer(fn() => yield $this->startNotLoggedInSessions());
+        Loop::defer(fn() => yield $this->startNotLoggedInSessions());
 
         $sessionsCount = count($sessionFiles);
         warning(
@@ -117,7 +122,12 @@ class Client
         }
 
         if (empty($this->instances[$session])) {
-            throw new InvalidArgumentException('Session not found.');
+            try {
+                $this->addSession($session);
+            } catch (\Exception $e) {
+                throw new InvalidArgumentException('Session not found.');
+            }
+
         }
 
         return $this->instances[$session];
